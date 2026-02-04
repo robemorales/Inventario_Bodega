@@ -3,70 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventario IT - Bodega</title>
+    <title>Inventario IT - AES Chile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
-        body { background-color: #f4f7f6; }
-        .container { margin-top: 30px; }
-        .card { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        body { background-color: #f8f9fa; font-family: sans-serif; }
+        .header-aes { background-color: #00529b; color: white; padding: 20px; margin-bottom: 20px; border-radius: 0 0 15px 15px; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .form-label { font-weight: bold; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="card p-4">
-        <h2 class="text-primary">📦 Gestión de Inventario IT</h2>
-        <p class="text-muted">Laptops, Rallybars, Accesorios y más.</p>
-        
-        <hr>
+<div class="container mb-5">
+    <div class="header-aes shadow-sm text-center">
+        <h2>📦 Control de Inventario IT</h2>
+        <p class="mb-0">Gestión de Activos - Zona Norte</p>
+    </div>
 
+    <div class="card p-4 mb-4">
+        <h5 class="text-secondary mb-3">Nuevo Registro</h5>
         <div class="row g-3">
             <div class="col-md-3">
-                <input type="text" id="equipo" class="form-control" placeholder="Equipo (ej: Dell 5440)">
-            </div>
-            <div class="col-md-3">
-                <input type="text" id="serie" class="form-control" placeholder="N° de Serie">
-            </div>
-            <div class="col-md-3">
+                <label class="form-label">Categoría</label>
                 <select id="categoria" class="form-select">
-                    <option value="Laptop">Laptop</option>
-                    <option value="Rallybar">Rallybar</option>
-                    <option value="Mochila">Mochila</option>
-                    <option value="Docking">Docking</option>
+                    <option>Laptop</option>
+                    <option>Desktop</option>
+                    <option>Rallybar</option>
+                    <option>Kit Teclado/Mouse</option>
+                    <option>Mochila</option>
+                    <option>Docking</option>
                 </select>
             </div>
             <div class="col-md-3">
-                <button onclick="agregarItem()" class="btn btn-success w-100">Añadir al Listado</button>
+                <label class="form-label">Marca</label>
+                <input type="text" id="marca" class="form-control" placeholder="Ej: Dell, Logitech">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Modelo</label>
+                <input type="text" id="modelo" class="form-control" placeholder="Ej: Latitude 5440">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Número de Serie</label>
+                <input type="text" id="serie" class="form-control" placeholder="S/N Único">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Estado</label>
+                <select id="estado" class="form-select">
+                    <option>Disponible</option>
+                    <option>En Uso</option>
+                    <option>Dañado</option>
+                    <option>En Reparación</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Ubicación</label>
+                <input type="text" id="ubicacion" class="form-control" placeholder="Ej: Bodega Central">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Usuario/Asignado</label>
+                <input type="text" id="usuario" class="form-control" placeholder="Nombre del colaborador">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Fecha de Ingreso</label>
+                <input type="date" id="fecha" class="form-control">
+            </div>
+            <div class="col-md-9">
+                <label class="form-label">Comentarios / Imagen (Link)</label>
+                <input type="text" id="comentarios" class="form-control" placeholder="Notas adicionales o link de foto">
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button onclick="agregarItem()" class="btn btn-primary w-100">Guardar Equipo</button>
             </div>
         </div>
+    </div>
 
-        <hr>
-
+    <div class="card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="text-secondary m-0">Equipos en Inventario</h5>
+            <div>
+                <button onclick="descargarExcel()" class="btn btn-sm btn-outline-success">📥 Exportar Excel</button>
+                <input type="file" id="importar" class="d-none" onchange="importarExcel(event)">
+                <button onclick="document.getElementById('importar').click()" class="btn btn-sm btn-outline-secondary">📤 Cargar BD</button>
+            </div>
+        </div>
+        
         <div class="table-responsive">
-            <table class="table table-hover mt-3">
-                <thead class="table-dark">
+            <table class="table table-hover align-middle">
+                <thead class="table-light text-nowrap">
                     <tr>
-                        <th>Equipo</th>
-                        <th>Serie</th>
                         <th>Categoría</th>
-                        <th>Acciones</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>S/N</th>
+                        <th>Estado</th>
+                        <th>Ubicación</th>
+                        <th>Usuario</th>
+                        <th>Fecha</th>
+                        <th>Acción</th>
                     </tr>
                 </thead>
-                <tbody id="tablaCuerpo"></tbody>
+                <tbody id="tablaCuerpo" class="small"></tbody>
             </table>
-        </div>
-
-        <div class="d-flex gap-2 mt-4">
-            <button onclick="descargarExcel()" class="btn btn-outline-primary">📥 Descargar Reporte Excel</button>
-            <input type="file" id="importar" class="d-none" onchange="importarExcel(event)">
-            <button onclick="document.getElementById('importar').click()" class="btn btn-outline-secondary">📤 Cargar Base de Datos (Excel)</button>
         </div>
     </div>
 </div>
 
 <script>
-    let inventario = JSON.parse(localStorage.getItem('it_inventario')) || [];
+    let inventario = JSON.parse(localStorage.getItem('it_inventario_aes')) || [];
 
     function renderTabla() {
         const cuerpo = document.getElementById('tablaCuerpo');
@@ -74,40 +118,67 @@
         inventario.forEach((item, index) => {
             cuerpo.innerHTML += `
                 <tr>
-                    <td>${item.equipo}</td>
-                    <td>${item.serie}</td>
-                    <td><span class="badge bg-info text-dark">${item.categoria}</span></td>
-                    <td><button onclick="eliminar(${index})" class="btn btn-danger btn-sm">Eliminar</button></td>
+                    <td><strong>${item.categoria}</strong></td>
+                    <td>${item.marca}</td>
+                    <td>${item.modelo}</td>
+                    <td><code>${item.serie}</code></td>
+                    <td><span class="badge ${getBadgeColor(item.estado)}">${item.estado}</span></td>
+                    <td>${item.ubicacion}</td>
+                    <td>${item.usuario}</td>
+                    <td>${item.fecha}</td>
+                    <td><button onclick="eliminar(${index})" class="btn btn-sm btn-link text-danger p-0">Borrar</button></td>
                 </tr>`;
         });
-        localStorage.setItem('it_inventario', JSON.stringify(inventario));
+        localStorage.setItem('it_inventario_aes', JSON.stringify(inventario));
+    }
+
+    function getBadgeColor(estado) {
+        if(estado === 'Disponible') return 'bg-success';
+        if(estado === 'En Uso') return 'bg-primary';
+        if(estado === 'Dañado') return 'bg-danger';
+        return 'bg-warning text-dark';
     }
 
     function agregarItem() {
-        const equipo = document.getElementById('equipo').value;
-        const serie = document.getElementById('serie').value;
-        const categoria = document.getElementById('categoria').value;
+        const data = {
+            categoria: document.getElementById('categoria').value,
+            marca: document.getElementById('marca').value,
+            modelo: document.getElementById('modelo').value,
+            serie: document.getElementById('serie').value,
+            estado: document.getElementById('estado').value,
+            ubicacion: document.getElementById('ubicacion').value,
+            usuario: document.getElementById('usuario').value,
+            fecha: document.getElementById('fecha').value,
+            comentarios: document.getElementById('comentarios').value
+        };
 
-        if(equipo && serie) {
-            inventario.push({ equipo, serie, categoria });
+        if(data.serie && data.modelo) {
+            inventario.push(data);
             renderTabla();
-            document.getElementById('equipo').value = '';
-            document.getElementById('serie').value = '';
+            limpiarCampos();
         } else {
-            alert("Por favor completa los campos");
+            alert("S/N y Modelo son obligatorios");
         }
     }
 
+    function limpiarCampos() {
+        ['marca','modelo','serie','ubicacion','usuario','fecha','comentarios'].forEach(id => {
+            document.getElementById(id).value = '';
+        });
+    }
+
     function eliminar(index) {
-        inventario.splice(index, 1);
-        renderTabla();
+        if(confirm("¿Eliminar este registro?")) {
+            inventario.splice(index, 1);
+            renderTabla();
+        }
     }
 
     function descargarExcel() {
         const ws = XLSX.utils.json_to_sheet(inventario);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Inventario");
-        XLSX.writeFile(wb, "Inventario_IT_Bodega.xlsx");
+        XLSX.utils.book_append_sheet(wb, ws, "Inventario_IT");
+        XLSX.writeFile(wb, "Inventario_IT_ZonaNorte.xlsx");
     }
 
     function importarExcel(event) {
@@ -116,8 +187,7 @@
         reader.onload = (e) => {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, {type: 'array'});
-            const firstSheet = workbook.SheetNames[0];
-            const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
+            const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
             inventario = jsonData;
             renderTabla();
         };
