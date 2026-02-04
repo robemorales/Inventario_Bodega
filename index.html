@@ -68,9 +68,17 @@
                 <label class="form-label">Fecha de Ingreso</label>
                 <input type="date" id="fecha" class="form-control">
             </div>
-            <div class="col-md-9">
-                <label class="form-label">Comentarios / Imagen (Link)</label>
-                <input type="text" id="comentarios" class="form-control" placeholder="Notas adicionales o link de foto">
+            <div class="col-md-3">
+                <label class="form-label">Imagen Equipo</label>
+                <div class="input-group">
+                    <input type="file" id="fotoArchivo" accept="image/*" capture="environment" class="d-none" onchange="procesarFoto(event)">
+                    <button onclick="document.getElementById('fotoArchivo').click()" class="btn btn-outline-info w-100">
+                        📷 Capturar desde Cámara
+                    </button>
+                </div>
+                <div id="previewContainer" class="mt-2 d-none">
+                    <img id="imgPreview" src="" alt="Vista previa" style="max-height: 100px; border-radius: 8px;">
+                </div>
             </div>
             <div class="col-md-3 d-flex align-items-end">
                 <button onclick="agregarItem()" class="btn btn-primary w-100">Guardar Equipo</button>
