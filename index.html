@@ -8,15 +8,15 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         body { background-color: #f8f9fa; font-family: sans-serif; }
-        .header-aes { background-color: #00529b; color: white; padding: 20px; margin-bottom: 20px; border-radius: 0 0 15px 15px; }
+        .header-aes { background-color: #00529b; color: white; padding: 20px; border-radius: 0 0 15px 15px; }
         .card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .form-label { font-weight: bold; font-size: 0.9rem; }
+        .img-table { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container mb-5">
-    <div class="header-aes shadow-sm text-center">
+    <div class="header-aes shadow-sm text-center mb-4">
         <h2>📦 Control de Inventario IT</h2>
         <p class="mb-0">Gestión de Activos - Zona Norte</p>
     </div>
@@ -27,57 +27,50 @@
             <div class="col-md-3">
                 <label class="form-label">Categoría</label>
                 <select id="categoria" class="form-select">
-                    <option>Laptop</option>
-                    <option>Desktop</option>
-                    <option>Rallybar</option>
-                    <option>Kit Teclado/Mouse</option>
-                    <option>Mochila</option>
-                    <option>Docking</option>
+                    <option>Laptop</option><option>Desktop</option><option>Rallybar</option>
+                    <option>Kit Teclado/Mouse</option><option>Mochila</option><option>Docking</option>
                 </select>
             </div>
             <div class="col-md-3">
                 <label class="form-label">Marca</label>
-                <input type="text" id="marca" class="form-control" placeholder="Ej: Dell, Logitech">
+                <input type="text" id="marca" class="form-control">
             </div>
             <div class="col-md-3">
                 <label class="form-label">Modelo</label>
-                <input type="text" id="modelo" class="form-control" placeholder="Ej: Latitude 5440">
+                <input type="text" id="modelo" class="form-control">
             </div>
             <div class="col-md-3">
                 <label class="form-label">Número de Serie</label>
-                <input type="text" id="serie" class="form-control" placeholder="S/N Único">
+                <input type="text" id="serie" class="form-control">
             </div>
             <div class="col-md-3">
                 <label class="form-label">Estado</label>
                 <select id="estado" class="form-select">
-                    <option>Disponible</option>
-                    <option>En Uso</option>
-                    <option>Dañado</option>
-                    <option>En Reparación</option>
+                    <option>Disponible</option><option>En Uso</option><option>Dañado</option>
                 </select>
             </div>
             <div class="col-md-3">
                 <label class="form-label">Ubicación</label>
-                <input type="text" id="ubicacion" class="form-control" placeholder="Ej: Bodega Central">
+                <input type="text" id="ubicacion" class="form-control">
             </div>
             <div class="col-md-3">
                 <label class="form-label">Usuario/Asignado</label>
-                <input type="text" id="usuario" class="form-control" placeholder="Nombre del colaborador">
+                <input type="text" id="usuario" class="form-control">
             </div>
             <div class="col-md-3">
                 <label class="form-label">Fecha de Ingreso</label>
                 <input type="date" id="fecha" class="form-control">
             </div>
+            <div class="col-md-6">
+                <label class="form-label">Comentarios</label>
+                <input type="text" id="comentarios" class="form-control">
+            </div>
             <div class="col-md-3">
                 <label class="form-label">Imagen Equipo</label>
-                <div class="input-group">
-                    <input type="file" id="fotoArchivo" accept="image/*" capture="environment" class="d-none" onchange="procesarFoto(event)">
-                    <button onclick="document.getElementById('fotoArchivo').click()" class="btn btn-outline-info w-100">
-                        📷 Capturar desde Cámara
-                    </button>
-                </div>
+                <input type="file" id="fotoArchivo" accept="image/*" capture="environment" class="d-none" onchange="procesarFoto(event)">
+                <button onclick="document.getElementById('fotoArchivo').click()" class="btn btn-outline-info w-100">📷 Tomar Foto</button>
                 <div id="previewContainer" class="mt-2 d-none">
-                    <img id="imgPreview" src="" alt="Vista previa" style="max-height: 100px; border-radius: 8px;">
+                    <img id="imgPreview" src="" style="max-height: 50px; border-radius: 5px;">
                 </div>
             </div>
             <div class="col-md-3 d-flex align-items-end">
@@ -87,38 +80,44 @@
     </div>
 
     <div class="card p-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="text-secondary m-0">Equipos en Inventario</h5>
+        <div class="d-flex justify-content-between mb-3">
+            <h5 class="text-secondary">Listado de Equipos</h5>
             <div>
-                <button onclick="descargarExcel()" class="btn btn-sm btn-outline-success">📥 Exportar Excel</button>
+                <button onclick="descargarExcel()" class="btn btn-sm btn-success">📥 Excel</button>
                 <input type="file" id="importar" class="d-none" onchange="importarExcel(event)">
-                <button onclick="document.getElementById('importar').click()" class="btn btn-sm btn-outline-secondary">📤 Cargar BD</button>
+                <button onclick="document.getElementById('importar').click()" class="btn btn-sm btn-secondary">📤 Cargar BD</button>
             </div>
         </div>
-        
         <div class="table-responsive">
             <table class="table table-hover align-middle">
-                <thead class="table-light text-nowrap">
+                <thead class="table-light">
                     <tr>
-                        <th>Categoría</th>
-                        <th>Marca</th>
-                        <th>Modelo</th>
-                        <th>S/N</th>
-                        <th>Estado</th>
-                        <th>Ubicación</th>
-                        <th>Usuario</th>
-                        <th>Fecha</th>
-                        <th>Acción</th>
+                        <th>Categoría</th><th>Marca</th><th>Modelo</th><th>S/N</th><th>Estado</th>
+                        <th>Ubicación</th><th>Usuario</th><th>Fecha</th><th>Foto</th><th>Acción</th>
                     </tr>
                 </thead>
-                <tbody id="tablaCuerpo" class="small"></tbody>
+                <tbody id="tablaCuerpo"></tbody>
             </table>
         </div>
     </div>
 </div>
 
 <script>
-    let inventario = JSON.parse(localStorage.getItem('it_inventario_aes')) || [];
+    let inventario = JSON.parse(localStorage.getItem('it_inventario_v3')) || [];
+    let fotoBase64 = "";
+
+    function procesarFoto(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                fotoBase64 = e.target.result;
+                document.getElementById('imgPreview').src = fotoBase64;
+                document.getElementById('previewContainer').classList.remove('d-none');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
 
     function renderTabla() {
         const cuerpo = document.getElementById('tablaCuerpo');
@@ -126,80 +125,61 @@
         inventario.forEach((item, index) => {
             cuerpo.innerHTML += `
                 <tr>
-                    <td><strong>${item.categoria}</strong></td>
+                    <td>${item.categoria}</td>
                     <td>${item.marca}</td>
                     <td>${item.modelo}</td>
                     <td><code>${item.serie}</code></td>
-                    <td><span class="badge ${getBadgeColor(item.estado)}">${item.estado}</span></td>
+                    <td><span class="badge ${item.estado === 'Disponible' ? 'bg-success' : 'bg-warning'}">${item.estado}</span></td>
                     <td>${item.ubicacion}</td>
                     <td>${item.usuario}</td>
                     <td>${item.fecha}</td>
-                    <td><button onclick="eliminar(${index})" class="btn btn-sm btn-link text-danger p-0">Borrar</button></td>
+                    <td>${item.imagen ? `<img src="${item.imagen}" class="img-table" onclick="alert('Ver imagen completa')">` : 'Sin foto'}</td>
+                    <td><button onclick="eliminar(${index})" class="btn btn-sm text-danger">Borrar</button></td>
                 </tr>`;
         });
-        localStorage.setItem('it_inventario_aes', JSON.stringify(inventario));
-    }
-
-    function getBadgeColor(estado) {
-        if(estado === 'Disponible') return 'bg-success';
-        if(estado === 'En Uso') return 'bg-primary';
-        if(estado === 'Dañado') return 'bg-danger';
-        return 'bg-warning text-dark';
+        localStorage.setItem('it_inventario_v3', JSON.stringify(inventario));
     }
 
     function agregarItem() {
-        const data = {
-            categoria: document.getElementById('categoria').value,
-            marca: document.getElementById('marca').value,
-            modelo: document.getElementById('modelo').value,
-            serie: document.getElementById('serie').value,
-            estado: document.getElementById('estado').value,
-            ubicacion: document.getElementById('ubicacion').value,
-            usuario: document.getElementById('usuario').value,
-            fecha: document.getElementById('fecha').value,
-            comentarios: document.getElementById('comentarios').value
-        };
+        // Validación para evitar el error de "null reading value"
+        const campos = ['categoria', 'marca', 'modelo', 'serie', 'estado', 'ubicacion', 'usuario', 'fecha', 'comentarios'];
+        const data = {};
+        
+        campos.forEach(id => {
+            const el = document.getElementById(id);
+            data[id] = el ? el.value : "";
+        });
+        data.imagen = fotoBase64;
 
         if(data.serie && data.modelo) {
             inventario.push(data);
             renderTabla();
-            limpiarCampos();
+            // Limpiar
+            campos.forEach(id => { if(id !== 'categoria' && id !== 'estado') document.getElementById(id).value = ""; });
+            fotoBase64 = "";
+            document.getElementById('previewContainer').classList.add('d-none');
         } else {
-            alert("S/N y Modelo son obligatorios");
+            alert("Completa S/N y Modelo");
         }
     }
 
-    function limpiarCampos() {
-        ['marca','modelo','serie','ubicacion','usuario','fecha','comentarios'].forEach(id => {
-            document.getElementById(id).value = '';
-        });
-    }
-
-    function eliminar(index) {
-        if(confirm("¿Eliminar este registro?")) {
-            inventario.splice(index, 1);
-            renderTabla();
-        }
-    }
+    function eliminar(index) { if(confirm("¿Eliminar?")) { inventario.splice(index, 1); renderTabla(); } }
 
     function descargarExcel() {
         const ws = XLSX.utils.json_to_sheet(inventario);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Inventario_IT");
-        XLSX.writeFile(wb, "Inventario_IT_ZonaNorte.xlsx");
+        XLSX.utils.book_append_sheet(wb, ws, "Inventario");
+        XLSX.writeFile(wb, "Inventario_IT_AES.xlsx");
     }
 
     function importarExcel(event) {
-        const file = event.target.files[0];
         const reader = new FileReader();
         reader.onload = (e) => {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, {type: 'array'});
-            const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-            inventario = jsonData;
+            const workbook = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
+            inventario = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
             renderTabla();
         };
-        reader.readAsArrayBuffer(file);
+        reader.readAsArrayBuffer(event.target.files[0]);
     }
 
     renderTabla();
